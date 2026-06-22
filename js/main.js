@@ -480,10 +480,10 @@ function renderPlayer(player, shirtColor, darkColor) {
 
     // Eyes and pupils face the camera so they are visible in side view.
     const eyeZ = headCenterZ + 0.06;
-    const eyeY = -r * 0.78;
+    const eyeY = -r * 1.02;
     for (const eyeX of [-0.11, 0.11]) {
         renderSolidObject(childTransform(root, [eyeX, eyeY, eyeZ], [0.075, 0.035, 0.075]), buffers.head, [1,1,1], 0.1);
-        renderSolidObject(childTransform(root, [eyeX + player.direction * 0.02, eyeY - 0.025, eyeZ], [0.035, 0.02, 0.035]), buffers.head, [0.02,0.02,0.02], 0.05);
+        renderSolidObject(childTransform(root, [eyeX + player.direction * 0.02, eyeY - 0.03, eyeZ], [0.035, 0.02, 0.035]), buffers.head, [0.02,0.02,0.02], 0.05);
     }
     renderSolidObject(childTransform(root, [0, eyeY - 0.03, headCenterZ - 0.14], [0.16, 0.025, 0.035]), buffers.cube, [0.16,0.04,0.04], 0.05);
 
