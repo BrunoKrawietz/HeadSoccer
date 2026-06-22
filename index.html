@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Head Soccer - WebGL Game</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="1200" height="800"></canvas>
+
+        <div id="gameUI">
+            <div id="scoreBoard">
+                <div class="player-score player-one">
+                    <span class="player-label">Bruno</span>
+                    <span id="player1Score" class="score">0</span>
+                </div>
+                <div class="game-timer">
+                    <span id="gameTimer">HEAD SOCCER</span>
+                    <small id="difficultyLabel">Normal</small>
+                </div>
+                <div class="player-score player-two">
+                    <span class="player-label">Joaquin</span>
+                    <span id="player2Score" class="score">0</span>
+                </div>
+            </div>
+
+            <div id="controlsInfo">
+                <div class="control-group">
+                    <h3>Player 1</h3>
+                    <p><kbd>A</kbd><kbd>D</kbd> move · <kbd>W</kbd> jump · <kbd>G</kbd> kick</p>
+                </div>
+                <div class="control-group">
+                    <h3>Player 2</h3>
+                    <p><kbd>←</kbd><kbd>→</kbd> move · <kbd>↑</kbd> jump · <kbd>L</kbd> kick</p>
+                </div>
+                <div class="control-group">
+                    <h3>Game</h3>
+                    <p><kbd>SPACE</kbd> restart · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> cameras</p>
+                    <p><kbd>+</kbd><kbd>-</kbd> difficulty · <kbd>H</kbd> help · <kbd>O</kbd> stadium lights</p>
+                </div>
+            </div>
+
+            <div id="gameStatus">
+                <div id="statusMessage">Move, jump and kick the ball into the goal!</div>
+            </div>
+        </div>
+
+        <div id="loadingScreen">
+            <div class="loading-content">
+                <h1>3D Head Soccer</h1>
+                <div class="loading-spinner"></div>
+                <p>Loading WebGL resources...</p>
+                <div class="loading-bar"><div id="loadingProgress" class="loading-fill"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="webglError" class="hidden">
+        <div class="error-content">
+            <h2>WebGL Not Supported</h2>
+            <p>Your browser does not support WebGL or it is disabled.</p>
+            <p>Please use a modern browser like Chrome, Firefox, Edge or Safari.</p>
+        </div>
+    </div>
+
+    <script src="libs/gl-matrix-min.js"></script>
+    <script>
+        function initializeGlMatrix() {
+            if (typeof glMatrix !== 'undefined') {
+                window.mat4 = glMatrix.mat4;
+                window.mat3 = glMatrix.mat3;
+                window.vec3 = glMatrix.vec3;
+                window.vec4 = glMatrix.vec4;
+                window.quat = glMatrix.quat;
+            }
+            if (typeof mat4 !== 'undefined') {
+                try { mat4.create(); return true; }
+                catch (error) { console.error('mat4 test failed:', error); }
+            }
+            return false;
+        }
+
+        if (initializeGlMatrix()) {
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loadingScreen');
+                if (loadingScreen) loadingScreen.style.display = 'none';
+            }, 700);
+        } else {
+            document.getElementById('webglError').classList.remove('hidden');
+            document.getElementById('gameContainer').style.display = 'none';
+        }
+    </script>
+
+    <script src="js/geometry.js"></script>
+    <script src="js/gameObjects.js"></script>
+    <script src="js/camera.js"></script>
+    <script src="js/obj-loader.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
