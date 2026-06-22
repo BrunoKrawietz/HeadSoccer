@@ -74,16 +74,16 @@ class HeadSoccerPlayer extends GameObject {
         this.team = team;
         this.direction = team === 1 ? 1 : -1;
         this.velocity = { x: 0, z: 0 };
-        this.speed = 2.75;
-        this.jumpVelocity = 4.9;
+        this.speed = 3.5;
+        this.jumpVelocity = 5.5;
         this.onGround = true;
         this.walkPhase = 0;
         this.kickTimer = 0;
         this.bigHeadTimer = 0;
         this.superShotTimer = 0;
         this.bigGoalTimer = 0;
-        this.bodyWidth = 0.45;
-        this.bodyHeight = 0.78;
+        this.bodyWidth = 0.3;
+        this.bodyHeight = 0.4;
         this.baseHeadRadius = 0.34;
     }
 
@@ -222,14 +222,14 @@ class GameState {
                 left: this.keys['a'],
                 right: this.keys['d'],
                 jump: this.keys['w'],
-                kickPressed: this.pressedThisFrame['g']
+                kickPressed: this.pressedThisFrame['s']
             };
         }
         return {
             left: this.keys['arrowleft'],
             right: this.keys['arrowright'],
             jump: this.keys['arrowup'],
-            kickPressed: this.pressedThisFrame['l']
+            kickPressed: this.pressedThisFrame['arrowdown']
         };
     }
 
@@ -560,7 +560,7 @@ class GameState {
         this.updateScoreDisplay();
 
         if (this.score.player1 >= this.scoreLimit || this.score.player2 >= this.scoreLimit) {
-            const winner = this.score.player1 > this.score.player2 ? 'Bruno' : 'Joaquin';
+            const winner = this.score.player1 > this.score.player2 ? 'Player 1' : 'Player 2';
             this.matchFinished = true;
             this.showStatus(`${winner} wins the match! Press SPACE for a new game.`, 4200);
             this.resetRound(playerNumber === 1 ? -1 : 1);
@@ -643,7 +643,7 @@ class GameState {
             if (dx * dx + dz * dz < radius * radius) {
                 const type = this.getRandomPowerUpType();
                 player.activatePowerUp(type);
-                this.showStatus(`${player.team === 1 ? 'Bruno' : 'Joaquin'} got ${this.powerUpLabel(type)}!`, 1800);
+                this.showStatus(`${player.team === 1 ? 'Player 1' : 'Player 2'} got ${this.powerUpLabel(type)}!`, 1800);
                 this.powerUp = null;
                 return;
             }

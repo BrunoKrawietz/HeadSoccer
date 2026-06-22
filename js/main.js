@@ -445,13 +445,13 @@ function renderGoals() {
     const leftPostColor = gameState.player2.bigGoalTimer > 0 ? boostedPostColor : postColor;
     const rightPostColor = gameState.player1.bigGoalTimer > 0 ? boostedPostColor : postColor;
 
-    // Left goal: target for player 2. It becomes bigger during Joaquin's Big Goal power-up.
+    // Left goal: target for player 2. It becomes bigger during Player 2's Big Goal power-up.
     renderSolidObject(createTransform([a.left, -goalY, leftGoalZ/2], [post, post, leftGoalZ]), buffers.goalPost, leftPostColor, 0.55);
     renderSolidObject(createTransform([a.left,  goalY, leftGoalZ/2], [post, post, leftGoalZ]), buffers.goalPost, leftPostColor, 0.55);
     renderSolidObject(createTransform([a.left, 0, leftGoalZ], [post, goalY*2 + post, post]), buffers.goalPost, leftPostColor, 0.55);
     renderSolidObject(createTransform([a.left - 0.34, 0, leftGoalZ/2], [post, goalY*2, leftGoalZ]), buffers.goalPost, netColor, 0.06);
 
-    // Right goal: target for player 1. It becomes bigger during Bruno's Big Goal power-up.
+    // Right goal: target for player 1. It becomes bigger during Player 1's Big Goal power-up.
     renderSolidObject(createTransform([a.right, -goalY, rightGoalZ/2], [post, post, rightGoalZ]), buffers.goalPost, rightPostColor, 0.55);
     renderSolidObject(createTransform([a.right,  goalY, rightGoalZ/2], [post, post, rightGoalZ]), buffers.goalPost, rightPostColor, 0.55);
     renderSolidObject(createTransform([a.right, 0, rightGoalZ], [post, goalY*2 + post, post]), buffers.goalPost, rightPostColor, 0.55);
