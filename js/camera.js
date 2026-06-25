@@ -38,8 +38,8 @@ class Camera {
     // initial view
     setStadiumView() {
         this.mode = 'stadium';
-        this.position = { x: 0, y: -8.6, z: 3.6 };
-        this.target = { x: 0, y: 0, z: 0.75 };
+        this.position = { x: 0, y: -8.6, z: 5.6 };
+        this.target = { x: 0, y: 0, z: 0.6 };
         this.up = { x: 0, y: 0, z: 1 };
     }
 
