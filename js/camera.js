@@ -1,4 +1,6 @@
 class Camera {
+
+    // initial position of camera
     constructor(canvas) {
         this.canvas = canvas;
         this.position = { x: 0, y: -8.6, z: 2.25 };
@@ -8,6 +10,7 @@ class Camera {
         this.setupControls();
     }
 
+    // switch to other camera views
     setupControls() {
         document.addEventListener('keydown', (e) => {
             if (e.key === '1') this.setSideView();
@@ -16,6 +19,7 @@ class Camera {
         });
     }
 
+    // side view
     setSideView() {
         this.mode = 'side';
         this.position = { x: 0, y: -8.2, z: 1.65 };
@@ -23,6 +27,7 @@ class Camera {
         this.up = { x: 0, y: 0, z: 1 };
     }
 
+    // top view
     setTopView() {
         this.mode = 'top';
         this.position = { x: 0, y: -0.04, z: 8.5 };
@@ -30,10 +35,11 @@ class Camera {
         this.up = { x: 0, y: 1, z: 0 };
     }
 
+    // initial view
     setStadiumView() {
         this.mode = 'stadium';
-        this.position = { x: 0, y: -8.6, z: 2.25 };
-        this.target = { x: 0, y: 0, z: 1.15 };
+        this.position = { x: 0, y: -8.6, z: 3.6 };
+        this.target = { x: 0, y: 0, z: 0.75 };
         this.up = { x: 0, y: 0, z: 1 };
     }
 
