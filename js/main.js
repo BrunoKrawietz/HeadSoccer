@@ -425,12 +425,6 @@ function renderArena() {
     renderSolidObject(createTransform([0, -1.33, 0.012], [0.035, 0.05, 0.024]), buffers.cube, lineColor, 0.05);
     renderSolidObject(createTransform([0, 0, 0.015], [0.04, 2.52, 0.03]), buffers.cube, lineColor, 0.05);
 
-    // Small advertising boards in the back, animated-looking through different sizes/colors.
-    for (let i = 0; i < 8; i++) {
-        const x = -3.9 + i * 1.1;
-        const color = i % 2 === 0 ? [0.88, 0.62, 0.16] : [0.18, 0.56, 0.86];
-        renderSolidObject(createTransform([x, 1.50, 0.36], [0.92, 0.08, 0.28]), buffers.cube, color, 0.15);
-    }
 }
 
 function renderGoals() {
