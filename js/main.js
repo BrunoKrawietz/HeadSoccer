@@ -462,12 +462,12 @@ function renderPlayer(player, shirtColor, darkColor) {
 
     // Body and neck
     renderSolidObject(childTransform(root, [0, 0, 0.58], [0.46, 0.30, 0.78]), buffers.body, shirtColor, 0.36);
-    renderSolidObject(childTransform(root, [0, 0, 0.99], [0.16, 0.16, 0.16]), buffers.head, [0.85, 0.58, 0.38], 0.22);
+    renderSolidObject(childTransform(root, [0, 0, 0.99], [0.16, 0.16, 0.16]), buffers.head, shirtColor, 0.22);
 
     // Oversized Head Soccer head
     const r = player.headRadius;
     const headCenterZ = 1.15 + headBob;
-    renderSolidObject(childTransform(root, [0, 0, headCenterZ], [r * 2, r * 2, r * 2]), buffers.head, [0.96, 0.72, 0.52], 0.38);
+    renderSolidObject(childTransform(root, [0, 0, headCenterZ], [r * 2, r * 2, r * 2]), buffers.head, shirtColor, 0.38);
 
     // Hair cap
     renderSolidObject(childTransform(root, [0, -0.02, headCenterZ + r * 0.42], [r * 1.45, r * 1.25, r * 0.45]), buffers.head, darkColor, 0.2);
