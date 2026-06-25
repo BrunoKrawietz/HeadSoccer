@@ -454,7 +454,7 @@ function renderGoals() {
 
 function renderPlayer(player, shirtColor, darkColor) {
     const root = mat4.create();
-    mat4.translate(root, root, [player.position.x, 0, player.position.z + 0.5]);
+    mat4.translate(root, root, [player.position.x, 0, player.position.z + 0.15]);
 
     const walking = Math.sin(player.walkPhase) * 0.55;
     const kick = player.kickTimer > 0 ? -player.direction * 1.05 * Math.sin((player.kickTimer / 0.22) * Math.PI) : 0;
