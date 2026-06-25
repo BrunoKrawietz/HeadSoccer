@@ -138,7 +138,7 @@ class HeadSoccerPlayer extends GameObject {
 
         if (Math.abs(input) > 0.01 && this.onGround) this.walkPhase += deltaTime * 13.0;
         // player doesnt move his feet if he is staying still
-        else if (this.onGround) this.walkPhase += deltaTime * 2.0;
+        else if (this.onGround) this.walkPhase = 0;
     }
 
     activatePowerUp(type) {
