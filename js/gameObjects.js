@@ -75,7 +75,7 @@ class HeadSoccerPlayer extends GameObject {
         this.direction = team === 1 ? 1 : -1;
         this.velocity = { x: 0, z: 0 };
         this.speed = 3.5;
-        this.jumpVelocity = 4.9;
+        this.jumpVelocity = 4.7;
         this.onGround = true;
         this.walkPhase = 0;
         this.kickTimer = 0;
