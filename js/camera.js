@@ -3,8 +3,8 @@ class Camera {
     // initial position of camera
     constructor(canvas) {
         this.canvas = canvas;
-        this.position = { x: 0, y: -8.6, z: 2.25 };
-        this.target = { x: 0, y: 0, z: 1.15 };
+        this.position = { x: 0, y: -8.6, z: 5.6 };
+        this.target = { x: 0, y: 0, z: 0.6 };
         this.up = { x: 0, y: 0, z: 1 };
         this.mode = 'stadium';
         this.setupControls();
