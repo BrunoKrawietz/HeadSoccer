@@ -217,7 +217,6 @@ function initBuffers() {
     buffers.head = createGeometryBuffers(createPlayerHead());
     buffers.ball = createGeometryBuffers(createBall());
     buffers.powerUp = createGeometryBuffers(createPowerUp());
-    buffers.shadowDisc = createGeometryBuffers(createShadowDisc());
 }
 
 function createGeometryBuffers(geometry) {

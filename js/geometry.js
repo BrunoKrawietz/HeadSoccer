@@ -155,10 +155,8 @@ function createSphere(segments = 32, rings = 16) {
     };
 }
 
-function createFieldLine() { return createUnitCube(); }
 function createGoalPost() { return createUnitCube(); }
 function createPlayerBody() { return createUnitCube(); }
 function createPlayerHead() { return createSphere(32, 16); }
 function createBall() { return createSphere(40, 20); }
 function createPowerUp() { return createCylinder(32); }
-function createShadowDisc() { return createCylinder(32); }
