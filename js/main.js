@@ -210,13 +210,13 @@ function createShader(type, source) {
 }
 
 function initBuffers() {
-    buffers.field = createGeometryBuffers(createField());
-    buffers.cube = createGeometryBuffers(createUnitCube());
-    buffers.goalPost = createGeometryBuffers(createGoalPost());
-    buffers.body = createGeometryBuffers(createPlayerBody());
-    buffers.head = createGeometryBuffers(createPlayerHead());
-    buffers.ball = createGeometryBuffers(createBall());
-    buffers.powerUp = createGeometryBuffers(createPowerUp());
+    buffers.field = createGeometryBuffers(createFieldMesh());
+    buffers.cube = createGeometryBuffers(createBoxMesh());
+    buffers.goalPost = createGeometryBuffers(createGoalPostMesh());
+    buffers.body = createGeometryBuffers(createPlayerBodyMesh());
+    buffers.head = createGeometryBuffers(createPlayerHeadMesh());
+    buffers.ball = createGeometryBuffers(createBallMesh());
+    buffers.powerUp = createGeometryBuffers(createPowerUpMesh());
 }
 
 function createGeometryBuffers(geometry) {
@@ -235,10 +235,10 @@ function createGeometryBuffers(geometry) {
         gl.bufferData(gl.ARRAY_BUFFER, geometry.normals, gl.STATIC_DRAW);
     }
 
-    if (geometry.texCoords) {
-        bufferSet.texCoords = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, bufferSet.texCoords);
-        gl.bufferData(gl.ARRAY_BUFFER, geometry.texCoords, gl.STATIC_DRAW);
+    if (geometry.textureCoordinates) {
+        bufferSet.textureCoordinates = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, bufferSet.textureCoordinates);
+        gl.bufferData(gl.ARRAY_BUFFER, geometry.textureCoordinates, gl.STATIC_DRAW);
     }
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferSet.indices);
@@ -548,8 +548,8 @@ function renderTexturedObject(bufferSet, modelMatrix, texture, specularStrength 
     gl.uniform1i(uniforms.texture.texture, 0);
 
     bindCommonBuffers(bufferSet, attributes.texture);
-    if (attributes.texture.texCoord !== -1 && bufferSet.texCoords) {
-        gl.bindBuffer(gl.ARRAY_BUFFER, bufferSet.texCoords);
+    if (attributes.texture.texCoord !== -1 && bufferSet.textureCoordinates) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, bufferSet.textureCoordinates);
         gl.vertexAttribPointer(attributes.texture.texCoord, 2, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(attributes.texture.texCoord);
     }
