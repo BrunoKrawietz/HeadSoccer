@@ -1,22 +1,24 @@
-class GameObject {
+
+class SceneObject {
     constructor(x = 0, y = 0, z = 0) {
         this.position = { x, y, z };
         this.scale = { x: 1, y: 1, z: 1 };
         this.rotation = { x: 0, y: 0, z: 0 };
     }
 
-    getModelMatrix() {
-        const matrix = mat4.create();
-        mat4.translate(matrix, matrix, [this.position.x, this.position.y, this.position.z]);
-        mat4.rotateX(matrix, matrix, this.rotation.x);
-        mat4.rotateY(matrix, matrix, this.rotation.y);
-        mat4.rotateZ(matrix, matrix, this.rotation.z);
-        mat4.scale(matrix, matrix, [this.scale.x, this.scale.y, this.scale.z]);
-        return matrix;
+    createModelMatrix() {
+
+        const ModelMatrix = mat4.create();
+        mat4.translate(ModelMatrix, ModelMatrix, [this.position.x, this.position.y, this.position.z]);
+        mat4.rotateX(ModelMatrix, ModelMatrix, this.rotation.x);
+        mat4.rotateY(ModelMatrix, ModelMatrix, this.rotation.y);
+        mat4.rotateZ(ModelMatrix, ModelMatrix, this.rotation.z);
+        mat4.scale(ModelMatrix, ModelMatrix, [this.scale.x, this.scale.y, this.scale.z]);
+        return ModelMatrix;
     }
 }
 
-class SoccerBall extends GameObject {
+class SoccerBall extends SceneObject {
     constructor() {
         super(0, 0, 1.85);
         this.radius = 0.22;
@@ -58,16 +60,18 @@ class SoccerBall extends GameObject {
         }
     }
 
-    getModelMatrix() {
-        const matrix = mat4.create();
-        mat4.translate(matrix, matrix, [this.position.x, this.position.y, this.position.z]);
-        mat4.rotateY(matrix, matrix, this.rotationAmount);
-        mat4.scale(matrix, matrix, [this.radius * 2, this.radius * 2, this.radius * 2]);
-        return matrix;
+    // need to override ModelMatrix because we r using rotationAmount for the ball
+    createModelMatrix() {
+
+        const ModelMatrix = mat4.create();
+        mat4.translate(ModelMatrix, ModelMatrix, [this.position.x, this.position.y, this.position.z]);
+        mat4.rotateY(ModelMatrix, ModelMatrix, this.rotationAmount);
+        mat4.scale(ModelMatrix, ModelMatrix, [this.radius * 2, this.radius * 2, this.radius * 2]);
+        return ModelMatrix;
     }
 }
 
-class HeadSoccerPlayer extends GameObject {
+class HeadSoccerPlayer extends SceneObject {
     constructor(x, team) {
         super(x, 0, 0);
         this.team = team;
@@ -145,7 +149,7 @@ class HeadSoccerPlayer extends GameObject {
     }
 }
 
-class PowerUp extends GameObject {
+class PowerUp extends SceneObject {
     constructor(x, z) {
         super(x, 0, z);
         this.radius = 0.22;

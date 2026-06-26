@@ -352,7 +352,7 @@ function render(currentTime) {
     renderTexturedObject(buffers.field, createTransform([0, 0, 0.012]), textures.field, 0.12);
     gl.disable(gl.POLYGON_OFFSET_FILL);
 
-    renderTexturedObject(buffers.ball, gameState.ball.getModelMatrix(), textures.ball, 0.9);
+    renderTexturedObject(buffers.ball, gameState.ball.createModelMatrix(), textures.ball, 0.9);
 
     setupSolidProgram(viewMatrix, projMatrix, lights, intensity);
     renderArena();
@@ -524,7 +524,7 @@ function renderPowerUp() {
     const p = gameState.powerUp;
 
     // Show only the golden coin. The small white sphere marker was removed.
-    renderSolidObject(p.getModelMatrix(), buffers.powerUp, [1.0, 0.78, 0.08], 0.9);
+    renderSolidObject(p.createModelMatrix(), buffers.powerUp, [1.0, 0.78, 0.08], 0.9);
 }
 
 function renderStadiumLights() {
