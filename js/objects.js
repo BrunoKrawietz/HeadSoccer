@@ -321,7 +321,7 @@ class GameState {
 
     showStatus(message, duration = 1800) {
 
-        const element = document.getElementById('statusMessage');
+        const element = document.getElementById('matchMess');
         if (!element) return;
 
         element.textContent = message;
@@ -451,7 +451,7 @@ class GameState {
 
         if (this.pressedThisFrame['h']) {
 
-            const controls = document.getElementById('controlsInfo');
+            const controls = document.getElementById('controlPanel');
             if (controls) controls.style.display = controls.style.display === 'none' ? 'block' : 'none';
 
         }

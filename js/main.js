@@ -12,13 +12,13 @@ let textures = {};
 
 async function startHeadSoccer() {
 
-    const canvas = document.getElementById('gameCanvas');
+    const canvas = document.getElementById('stadiumCanvas');
     gl = canvas.getContext('webgl', { antialias: true });
 
     if (!gl) {
 
-        document.getElementById('webglError').classList.remove('hidden');
-        document.getElementById('gameContainer').style.display = 'none';
+        document.getElementById('webglErr').classList.remove('hidden');
+        document.getElementById('stadiumContainer').style.display = 'none';
         return;
 
     }
@@ -521,12 +521,12 @@ function getLightPositions() {
     return [
 
         //floodlights in the afront
-        [-3.6, -3.7, 4.2],
-        [3.6, -3.7, 4.2],
+        [-3.6, -3.2, 3.25],
+        [3.6, -3.2, 3.25],
 
         //floddlights in the back
-        [-3.6, 3.7, 4.2],
-        [3.6, 3.7, 4.2],
+        [-3.6, 3.2, 3.25],
+        [3.6, 3.2, 3.25],
 
         //light near the ball
         [ball.x, -1.2, 3.2]
@@ -728,9 +728,9 @@ function renderStadiumLights() {
 
         for (const x of [-3.6, 3.6]) {
 
-            renderObject( compModelMatrix([x, y, 2.2], [0.10, 0.10, 3.0]), buffers.cube, [0.15, 0.16, 0.18], 0.2);
+            renderObject( compModelMatrix([x, y, 1.55], [0.10, 0.10, 3.1]), buffers.cube, [0.15, 0.16, 0.18], 0.2);
 
-            renderObject( compModelMatrix([x, y, 3.85], [0.58, 0.18, 0.22]), buffers.cube, color, 1.0);
+            renderObject( compModelMatrix([x, y, 3.25], [0.58, 0.18, 0.22]), buffers.cube, color, 1.0);
 
         }
     }
@@ -782,7 +782,7 @@ function renderObject(modelMatrix, bufferSet, color, specularStrength = 0.35) {
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferSet.indices);
     gl.drawElements(gl.TRIANGLES, bufferSet.numIndices, gl.UNSIGNED_SHORT, 0);
-
+    
 }
 
 function bindCommonBuffers(bufferSet, attrs) {
@@ -796,7 +796,6 @@ function bindCommonBuffers(bufferSet, attrs) {
         gl.bindBuffer(gl.ARRAY_BUFFER, bufferSet.normals);
         gl.vertexAttribPointer(attrs.normal, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(attrs.normal);
-        
     }
 }
 

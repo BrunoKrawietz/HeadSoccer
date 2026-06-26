@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Head Soccer - WebGL Game</title>
+    <title>Head Soccer</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div id="gameContainer">
-        <canvas id="gameCanvas" width="1200" height="800"></canvas>
+    <div id="stadiumContainer">
+        <canvas id="stadiumCanvas" width="1200" height="800"></canvas>
 
-        <div id="gameUI">
-            <div id="scoreBoard">
+        <div id="matchHud">
+            <div id="scoreHud">
                 <div class="player-score player-one">
                     <span class="player-label">Player 1</span>
                     <span id="player1Score" class="score">0</span>
                 </div>
-                <div class="game-timer">
-                    <span id="gameTimer">HEAD SOCCER</span>
+                <div class="match-title">
+                    <span id="matchTitle">HEAD SOCCER</span>
                     <small id="difficultyLabel">Normal</small>
                 </div>
                 <div class="player-score player-two">
@@ -26,7 +26,7 @@
                 </div>
             </div>
 
-            <div id="controlsInfo">
+            <div id="controlPanel">
                 <div class="control-group">
                     <h3>Player 1</h3>
                     <p><kbd>A</kbd><kbd>D</kbd> move · <kbd>W</kbd> jump · <kbd>S</kbd> kick</p>
@@ -42,26 +42,23 @@
                 </div>
             </div>
 
-            <div id="gameStatus">
-                <div id="statusMessage">Move, jump and kick the ball into the goal!</div>
+            <div id="messagePanel">
+                <div id="matchMess">Move, jump and kick the ball into the goal!</div>
             </div>
         </div>
 
-        <div id="loadingScreen">
+        <div id="loadScreen">
             <div class="loading-content">
-                <h1>3D Head Soccer</h1>
+                <h1>Head Soccer</h1>
                 <div class="loading-spinner"></div>
-                <p>Loading WebGL resources...</p>
-                <div class="loading-bar"><div id="loadingProgress" class="loading-fill"></div></div>
+                <p>Loading...</p>
             </div>
         </div>
     </div>
 
-    <div id="webglError" class="hidden">
+    <div id="webglErr" class="hidden">
         <div class="error-content">
-            <h2>WebGL Not Supported</h2>
-            <p>Your browser does not support WebGL or it is disabled.</p>
-            <p>Please use a modern browser like Chrome, Firefox, Edge or Safari.</p>
+            <p>Use another browser like Chrome, Firefox or Safari</p>
         </div>
     </div>
 
@@ -84,12 +81,12 @@
 
         if (initializeGlMatrix()) {
             setTimeout(() => {
-                const loadingScreen = document.getElementById('loadingScreen');
-                if (loadingScreen) loadingScreen.style.display = 'none';
+                const loadScreen = document.getElementById('loadScreen');
+                if (loadScreen) loadScreen.style.display = 'none';
             }, 700);
         } else {
-            document.getElementById('webglError').classList.remove('hidden');
-            document.getElementById('gameContainer').style.display = 'none';
+            document.getElementById('webglErr').classList.remove('hidden');
+            document.getElementById('stadiumContainer').style.display = 'none';
         }
     </script>
 
