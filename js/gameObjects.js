@@ -3,7 +3,6 @@ class GameObject {
         this.position = { x, y, z };
         this.scale = { x: 1, y: 1, z: 1 };
         this.rotation = { x: 0, y: 0, z: 0 };
-        this.active = true;
     }
 
     getModelMatrix() {
@@ -82,8 +81,6 @@ class HeadSoccerPlayer extends GameObject {
         this.bigHeadTimer = 0;
         this.superShotTimer = 0;
         this.bigGoalTimer = 0;
-        this.bodyWidth = 0.3;
-        this.bodyHeight = 0.4;
         this.baseHeadRadius = 0.34;
     }
 
@@ -152,8 +149,6 @@ class PowerUp extends GameObject {
     constructor(x, z) {
         super(x, 0, z);
         this.radius = 0.22;
-        // The visible coin is a mystery power-up. The concrete effect is chosen randomly on pickup.
-        this.type = 'MYSTERY';
         this.rotation.y = 0;
         this.scale = { x: 0.28, y: 0.28, z: 0.12 };
     }
@@ -170,10 +165,8 @@ class GameState {
         this.arena = {
             left: -4.35,
             right: 4.35,
-            ground: 0,
             ceiling: 3.35,
             goalHeight: 1.18,
-            goalDepth: 0.55
         };
         this.score = { player1: 0, player2: 0 };
         this.scoreLimit = 5;
@@ -618,20 +611,6 @@ class GameState {
             ball.velocity.z += 1.0;
         }
         return true;
-    }
-
-    handlePlayerBallCollision(player) {
-        const head = player.headCenter;
-        const body = player.bodyCenter;
-        const frontFootX = player.position.x + player.direction * 0.28;
-        const kickActive = player.kickTimer > 0;
-        const superShot = player.superShotTimer > 0;
-        const baseShot = this.difficulty.shotPower * (superShot ? 1.55 : 1.0);
-        const kickPower = kickActive ? player.direction * baseShot : 0;
-
-        this.collideBallWithCircle(head.x, head.z, player.headRadius, player.velocity.x, player.velocity.z, kickPower * 0.65);
-        this.collideBallWithCircle(body.x, body.z, 0.34, player.velocity.x, player.velocity.z, 0);
-        this.collideBallWithCircle(frontFootX, player.position.z + 0.18, kickActive ? 0.34 : 0.22, player.velocity.x, player.velocity.z, kickPower);
     }
 
     handlePowerUpCollision() {
