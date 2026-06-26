@@ -74,7 +74,7 @@ function initShaders() {
         varying vec3 v_worldPosition;
         uniform sampler2D u_texture;
         uniform vec3 u_cameraPosition;
-        uniform vec3 u_lightPositions[3];
+        uniform vec3 u_lightPositions[5];
         uniform float u_lightIntensity;
         uniform float u_specularStrength;
         void main() {
@@ -82,7 +82,7 @@ function initShaders() {
             vec3 normal = normalize(v_normal);
             vec3 viewDir = normalize(u_cameraPosition - v_worldPosition);
             vec3 color = baseColor * 0.42;
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 5; i++) {
                 vec3 lightDir = normalize(u_lightPositions[i] - v_worldPosition);
                 float distance = length(u_lightPositions[i] - v_worldPosition);
                 float attenuation = 1.0 / (1.0 + 0.07 * distance + 0.025 * distance * distance);
@@ -111,7 +111,9 @@ function initShaders() {
         lightPositions: [
             gl.getUniformLocation(textureProgram, 'u_lightPositions[0]'),
             gl.getUniformLocation(textureProgram, 'u_lightPositions[1]'),
-            gl.getUniformLocation(textureProgram, 'u_lightPositions[2]')
+            gl.getUniformLocation(textureProgram, 'u_lightPositions[2]'),
+            gl.getUniformLocation(textureProgram, 'u_lightPositions[3]'),
+            gl.getUniformLocation(textureProgram, 'u_lightPositions[4]')
         ],
         lightIntensity: gl.getUniformLocation(textureProgram, 'u_lightIntensity'),
         specularStrength: gl.getUniformLocation(textureProgram, 'u_specularStrength')
@@ -139,14 +141,14 @@ function initShaders() {
         varying vec3 v_worldPosition;
         uniform vec3 u_color;
         uniform vec3 u_cameraPosition;
-        uniform vec3 u_lightPositions[3];
+        uniform vec3 u_lightPositions[5];
         uniform float u_lightIntensity;
         uniform float u_specularStrength;
         void main() {
             vec3 normal = normalize(v_normal);
             vec3 viewDir = normalize(u_cameraPosition - v_worldPosition);
             vec3 color = u_color * 0.26;
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 5; i++) {
                 vec3 lightDir = normalize(u_lightPositions[i] - v_worldPosition);
                 float distance = length(u_lightPositions[i] - v_worldPosition);
                 float attenuation = 1.0 / (1.0 + 0.08 * distance + 0.028 * distance * distance);
@@ -174,7 +176,9 @@ function initShaders() {
         lightPositions: [
             gl.getUniformLocation(solidProgram, 'u_lightPositions[0]'),
             gl.getUniformLocation(solidProgram, 'u_lightPositions[1]'),
-            gl.getUniformLocation(solidProgram, 'u_lightPositions[2]')
+            gl.getUniformLocation(solidProgram, 'u_lightPositions[2]'),
+            gl.getUniformLocation(solidProgram, 'u_lightPositions[3]'),
+            gl.getUniformLocation(solidProgram, 'u_lightPositions[4]')
         ],
         lightIntensity: gl.getUniformLocation(solidProgram, 'u_lightIntensity'),
         specularStrength: gl.getUniformLocation(solidProgram, 'u_specularStrength')
@@ -368,8 +372,15 @@ function render(currentTime) {
 function getLightPositions() {
     const ball = gameState.ball.position;
     return [
+        //floodlights in the afront
         [-3.6, -3.7, 4.2],
         [3.6, -3.7, 4.2],
+
+        //floddlights in the back
+        [-3.6, 2.3, 4.2],
+        [3.6, 2.3, 4.2],
+
+        //light near the ball
         [ball.x, -1.2, 3.2]
     ];
 }
@@ -528,10 +539,27 @@ function renderPowerUp() {
 }
 
 function renderStadiumLights() {
+
     const color = gameState.stadiumLightsOn ? [1.0, 0.92, 0.68] : [0.28, 0.28, 0.30];
-    for (const x of [-3.6, 3.6]) {
-        renderSolidObject(createTransform([x, -3.2, 2.2], [0.10, 0.10, 3.0]), buffers.cube, [0.15,0.16,0.18], 0.2);
-        renderSolidObject(createTransform([x, -3.2, 3.85], [0.58, 0.18, 0.22]), buffers.cube, color, 1.0);
+    const frontY = -3.2;
+    const backY = 1.2;
+
+    for (const y of [frontY, backY]) {
+        for (const x of [-3.6, 3.6]) {
+            renderSolidObject(
+                createTransform([x, y, 2.2], [0.10, 0.10, 3.0]),
+                buffers.cube,
+                [0.15, 0.16, 0.18],
+                0.2
+            );
+
+            renderSolidObject(
+                createTransform([x, y, 3.85], [0.58, 0.18, 0.22]),
+                buffers.cube,
+                color,
+                1.0
+            );
+        }
     }
 }
 
