@@ -339,8 +339,8 @@ function render(currentTime) {
     camera.update(gameState);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    const viewMatrix = camera.getViewMatrix();
-    const projMatrix = camera.getProjectionMatrix();
+    const viewMatrix = camera.createViewMatrix();
+    const projMatrix = camera.createProjectionMatrix();
     const lights = getLightPositions();
     const intensity = gameState.stadiumLightsOn ? 1.0 : 0.22;
 
