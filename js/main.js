@@ -634,12 +634,12 @@ function renderPlayer(player, shirtColor, darkColor) {
     const headBob = player.onGround ? Math.abs(Math.sin(player.walkPhase)) * 0.025 : 0.045;
 
     // Body and neck
-    renderObject(childTransform(root, [0, 0, 0.58], [0.46, 0.30, 0.78]), buffers.body, shirtColor, 0.36);
-    renderObject(childTransform(root, [0, 0, 0.99], [0.16, 0.16, 0.16]), buffers.head, [0.85, 0.58, 0.38], 0.22);
+    renderObject(childTransform(root, [0, 0, 0.52], [0.46, 0.30, 0.68]), buffers.body, shirtColor, 0.36);
+    renderObject(childTransform(root, [0, 0, 0.9], [0.16, 0.16, 0.16]), buffers.head, [0.85, 0.58, 0.38], 0.22);
 
     // Oversized Head Soccer head
     const r = player.headRadius;
-    const headCenterZ = 1.15 + headBob;
+    const headCenterZ = 1.25 + headBob;
     renderObject(childTransform(root, [0, 0, headCenterZ], [r * 2, r * 2, r * 2]), buffers.head, [0.96, 0.72, 0.52], 0.38);
 
     // Eyes 
