@@ -128,7 +128,7 @@ class HeadSoccerPlayer extends SceneObject {
 
             x: this.position.x,
             y: 0,
-            z: this.position.z + 1.12
+            z: this.position.z + 1.3
 
         };
 
