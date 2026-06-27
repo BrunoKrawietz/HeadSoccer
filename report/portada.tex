@@ -1,0 +1,38 @@
+% #1-Asignatura
+% #2-Curso
+% #3-Nombre
+% #4-Idioma (ej. english, spanish)
+
+\newcommand{\portada}[4]{
+    % Guardamos el idioma elegido en una macro temporal
+    \def\idiomaelegido{#4}
+    
+    \fancyhead[L]{\helv #2}
+    \fancyhead[R]{\helv \nouppercase{\leftmark}}
+
+    \begin{titlepage}
+        \begin{center}
+            % Título principal
+            \fontsize{46}{50}\selectfont\textbf{#1}
+            \vspace{3cm}
+
+            % Imagen del logotipo
+            \includegraphics[width=0.6\textwidth]{logotipo.png} 
+            
+            % Espacio para el nombre
+            \vspace{2cm}
+            \fontsize{25}{35}\selectfont\textbf{#3}
+
+            \vspace{2.5cm}
+
+            % Fecha automática
+            \Large{\today}
+
+            \vspace{1cm}
+        \end{center}
+    \end{titlepage}
+    
+    % Justo al salir de la portada (fuera del entorno titlepage),
+    % activamos el idioma de forma definitiva para el resto del libro
+    \expandafter\selectlanguage\expandafter{\idiomaelegido}
+}

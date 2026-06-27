@@ -1,0 +1,55 @@
+\chapter{User Manual \& Deployment Guide}
+
+\section{System Requirements}
+The \textbf{3D Head Soccer} engine is engineered to run as a native, zero-installation web application. Because the architecture avoids external server backends or heavy middleware platforms, the entire software executes client-side within the sandbox of any standard internet browser.
+
+The only technical prerequisite is a modern web browser that provides built-in hardware acceleration via the **HTML5 Canvas 2D** and **WebGL 1.0** specifications. Compatible platforms include recent versions of Google Chrome, Mozilla Firefox, Microsoft Edge, and Apple Safari. No third-party plugins, container runtimes, or external browser extensions are required to run the simulation at maximum performance.
+
+\section{Installation and Deployment Instructions}
+Deploying and running the project is straightforward due to its standalone design. Since all code execution is orchestrated via vanilla JavaScript modules, there is no need to compile assets or spin up local Node.js or Python hosting servers unless required by strict local storage browser security constraints.
+
+To execute and initialize the game environment, follow these steps:
+\begin{enumerate}
+    \item Extract the source directory containing the core folders: \texttt{js/}, \texttt{css/}, \texttt{libs/}, and the root file.
+    \item Locate the main entry point file named \texttt{index.html} at the root of the project folder.
+    \item Double-click or open \texttt{index.html} directly using your preferred modern web browser.
+    \item The browser will load the structure, instantly boot the underlying matrix algebra routines inside \texttt{libs/gl-matrix-min.js}, proceduralize the textures, and display the stadium environment within less than a second.
+\end{enumerate}
+
+\section{Interactive Game Controls Guide}
+The runtime loop listens continuously to asynchronous keyboard events (\texttt{keydown} and \texttt{keyup}) to update human interactions instantly without interrupting physics updates or visual rasterization. The configuration supports full two-player local matches alongside comprehensive environment configuration shortcuts.
+
+The following comprehensive table outlines every valid real-time keyboard interaction mapped within our execution layer:
+
+\begin{table}[h!]
+\centering
+\small
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|p{7.5cm}|}
+\hline
+\textbf{Category} & \textbf{Key / Input} & \textbf{Mechanical Action \& System Response} \\ \hline
+\hline
+\textbf{Player 1 Controls} & \texttt{A} / \texttt{D} & Moves the avatar horizontally across the left pitch plane. \\ \cline{2-3}
+(Left Side) & \texttt{W} & Triggers the impulse physics routine to jump into the air. \\ \cline{2-3}
+ & \texttt{S} & Initiates the leg rotation sequence to perform an active kick. \\ \hline
+\hline
+\textbf{Player 2 Controls} & \texttt{Left} / \texttt{Right} & Moves the avatar horizontally across the right pitch plane. \\ \cline{2-3}
+(Right Side) & \texttt{Up} & Triggers the impulse physics routine to jump into the air. \\ \cline{2-3}
+ & \texttt{Down} & Initiates the leg rotation sequence to perform an active kick. \\ \hline
+\hline
+\textbf{Camera Views} & \texttt{1} & Swaps to the static, orthogonal \textbf{Side View} layout. \\ \cline{2-3}
+ & \texttt{2} & Swaps to the top-down tactical \textbf{Top View} overview. \\ \cline{2-3}
+ & \texttt{3} & Activates the dynamic \textbf{Stadium View} with smooth ball tracking. \\ \hline
+\hline
+\textbf{Environment} & \texttt{+} / \texttt{-} & Adjusts match difficulty (toggles physics variables and speed bounds). \\ \cline{2-3}
+\textbf{Settings} & \texttt{O} (Letter) & Toggles stadium reflectors (\texttt{stadiumLightsOn}) between night/day look. \\ \cline{2-3}
+ & \texttt{H} & Toggles the graphical HTML overlay containing basic instructions. \\ \hline
+\end{tabular}
+\caption{Complete Keyboard Mapping for Gameplay and Environment Control Configurations.}
+\label{tab:game_controls}
+\end{table}
+
+\subsection{Environmental Modification Triggers}
+As shown in Table \ref{tab:game_controls}, keys outside the movement group interact directly with global system uniforms. For example, pressing the \texttt{O} key alters the light attenuation bounds in real time, shifting the scene into an ambient stadium state. 
+
+Similarly, changing views with keys \texttt{1}, \texttt{2}, or \texttt{3} alters the camera parameters passed onto the \texttt{mat4.lookAt} function in \texttt{view.js}. This reconfigures the user's viewpoint on the fly, showing how flexible our native WebGL architecture is during active play.

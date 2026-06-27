@@ -1,0 +1,39 @@
+\chapter{Procedural Trigonometric Animations}
+
+\section{Movement without an External Skeleton}
+In standard 3D game development, characters are usually animated using bone skeletons (rigging) designed in external software and imported as keyframe files. However, to keep our pure WebGL engine lightweight and independent of external asset loaders, we designed a completely programmatic system. All the animations in our game are calculated in real time using pure mathematics inside JavaScript.
+
+The main advantage of this approach is that animations require zero memory storage on the GPU and can adapt dynamically to the game's state. By reading the elapsed time or the character's speed, our scripts modify the rotation and position variables of the limbs right before building the model matrices. This produces perfectly smooth movements that scale accurately with the game's frame rate.
+
+\section{The Walk Cycle: Sine Wave Alternation}
+To make the avatars look alive when moving horizontally across the pitch, we implemented a procedural walking cycle based on harmonic sine waves (\texttt{Math.sin}). When a player presses the movement keys, the game logic updates an internal animation timer that increases based on \texttt{deltaTime}.
+
+Inside the rendering loop, this timer is passed as an angle to the sine function. Because a sine wave naturally oscillates between $-1$ and $1$, we use this output as a multiplier to rotate the feet back and forth. To create a realistic walking cadence where one foot moves forward while the other moves backward, we introduce a phase shift into the equation of the second foot. This simple mathematical inversion causes the limbs to alternate perfectly, simulating a natural bipedal stride without needing any pre-recorded animation clips.
+
+\section{The Head Bobbing Effect: Absolute Values for Vertical Impact}
+When a person runs, their head does not stay at a fixed height; it bounces up and down with every step. To replicate this behavior, our project introduces a phenomenon known in graphics as "Head Bobbing".
+
+If we applied a standard sine wave to the vertical position, the head would move up on the right step and down on the left step, which looks unnatural. To fix this, our code applies the absolute value function (\texttt{Math.abs}) to the sine wave. By transforming all negative values into positive ones, the mathematical curve curves upward twice in a single full cycle. This matches human locomotion perfectly: the head reaches its peak height in the middle of each stride and drops slightly every time either the left or the right foot hits the ground. 
+
+The following snippet from our \texttt{main.js} file within the \texttt{renderPlayer} routine reveals the exact computational implementation of these synchronous, time-dependent structural oscillations:
+
+\begin{lstlisting}[style=vscode_JS]
+// Inside renderPlayer(player, shirtColor, darkColor)
+const walking = Math.sin(player.walkPhase) * 0.55;
+
+// Compute the kicking interpolation curve based on an active action timer
+const kick = player.kickTimer > 0 
+    ? -player.direction * 1.05 * Math.sin((player.kickTimer / 0.22) * Math.PI) 
+    : 0;
+
+// Apply absolute value to double the frequency of the vertical head bounce
+const headBob = player.onGround 
+    ? Math.abs(Math.sin(player.walkPhase)) * 0.025 
+    : 0.045;
+
+// Combine walking oscillations and kicking offsets for left and right legs
+const leftAngle = walking + (player.direction < 0 ? kick : 0);
+const rightAngle = -walking + (player.direction > 0 ? kick : 0);
+\end{lstlisting}
+
+This double-frequency bounce gives the giant heads a comical yet convincing weight and momentum during intense matches, while blending perfectly with the alternate rotation values passed onto the hierarchical matrices of the lower leg bones.

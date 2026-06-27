@@ -1,0 +1,71 @@
+\chapter{Physics Engine \& Collision Responses}
+
+\section{Kinematics and Euler Integration}
+To power the real-time movement of the soccer ball and the players, the application implements a custom physical simulation loop based on the \textbf{Euler Integration} method. Instead of applying complex differential equations, the system computes the position of objects at every frame by accumulation.
+
+Inside the updates, gravity acts as a continuous downward acceleration vector applied exclusively to the vertical velocity. The new speed and position of the ball are calculated step by step using the time slice ($\Delta t$):
+
+\begin{itemize}
+    \item \texttt{velocity.z += gravity * deltaTime}
+    \item \texttt{position.x += velocity.x * deltaTime}
+    \item \texttt{position.z += velocity.z * deltaTime}
+\end{itemize}
+
+To simulate horizontal air drag and field resistance, a friction factor is multiplied to the velocities on every iteration. This linear approximation creates a highly predictable environment where the ball loses momentum naturally over time, providing a solid foundation for the interactive gameplay loop.
+
+\section{Geometric Collision Detection}
+Due to the intense pace of the game, calculating exact collision intersections for complex 3D polygons would be computationally expensive. To optimize performance, our engine simplifies the objects into bounding spheres and standard boxes, projecting and testing their interactions on the main 2D playing plane.
+
+The interaction between a player and the ball relies on a circle-to-circle intersection test. The game logic continuously calculates the Euclidean distance between the center of the ball and the key hot-spots of the avatars (the torso, the large head, and the active kicking feet). If the square of the distance between these two center points becomes less than the square of their combined radii, a collision is triggered instantly. This abstract grouping guarantees a rapid evaluation rate that keeps the gameplay completely smooth and responsive.
+
+\section{Momentum Transfer and Kick Modifications}
+When a collision is validated, the physical engine overrides the trajectory of the ball to simulate an elastic bounce. The direction of the deflection is determined by calculating a unit normal vector (\texttt{nx}, \texttt{nz}) pointing from the contact point on the avatar toward the center of the ball.
+
+The velocity transfer changes drastically depending on whether the player is simply touching the ball or performing an active kick action. If the user triggers the action key, the script flags a boolean state. The code reads this flag and applies an additional impulse multiplier along the attack vector. The following implementation within \texttt{objects.js} shows how the game calculates this mechanical bounce and injects extra shot power during contact:
+
+\begin{lstlisting}[style=vscode_JS]
+// Inside GameState collision checks in objects.js
+const incoming = ball.velocity.x * nx + ball.velocity.z * nz;
+
+// Reflect incoming velocity along the contact normal vector
+if (incoming < 0) {
+    ball.velocity.x -= 1.50 * incoming * nx;
+    ball.velocity.z -= 1.50 * incoming * nz;
+}
+
+// Add constant push from player velocity, plus stronger impulse if kicking
+ball.velocity.x += nx * 0.36 + extraVelocityX * 0.14;
+ball.velocity.z += Math.max(nz * 0.58, 0.18) + extraVelocityZ * 0.08;
+
+if (kickPower !== 0) {
+    ball.velocity.x += Math.sign(kickPower) * Math.abs(kickPower);
+    ball.velocity.z += 1.0; // Force upward lift during kicks
+}
+\end{lstlisting}
+
+This logic ensures that defensive deflections feel heavy and mechanical, while an intentional shot results in a high-speed trajectory toward the opponent's net.
+
+\section{Lock Resolution: The Sandwich Effect}
+A typical bug in custom game physics happens when two moving solid entities trap a smaller object between them, causing the small item to pass through boundaries or crash the software because it cannot resolve the overlapping forces simultaneously. In our game, this is known as the "Sandwich Effect".
+
+To prevent the soccer ball from getting crushed or glitched when Player 1 and Player 2 clamp it tightly at the same time, our algorithm incorporates a positional resolution rule. Right after reflecting the speed vectors, the engine calculates the deep overlap value. Instead of just changing the speed, it forcibly updates the ball's coordinates using the contact normal combined with a small separation padding. 
+
+The code snippet below shows how the engine handles this positional adjustment, pushing the ball outward to ensure it never remains stuck or clip inside an avatar's bounding box:
+
+\begin{lstlisting}[style=vscode_JS]
+// Calculate distance and determine overlapping depth
+const distance = Math.sqrt(dx * dx + dz * dz);
+const overlap = radius - distance;
+
+if (overlap > 0) {
+    const nx = dx / distance;
+    const nz = dz / distance;
+    const separationPadding = 0.012;
+
+    // Forcibly push the ball out of the player's volume to resolve clamping
+    ball.position.x += nx * (overlap + separationPadding);
+    ball.position.z = Math.max(ball.radius, ball.position.z + nz * (overlap + separationPadding));
+}
+\end{lstlisting}
+
+By forcing this geometric separation right before the physics frame closes, the engine guarantees that even if both avatars compress the ball on the sidelines, the sphere resolves its position cleanly by escaping upward into the open air, preserving the stability of the game world.

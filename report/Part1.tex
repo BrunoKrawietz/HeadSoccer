@@ -1,0 +1,71 @@
+\chapter{Introduction \& Environment Description}
+
+\section{Context and Motivation}
+The project \textbf{3D Head Soccer} is an interactive, real-time sports simulation game inspired by classical arcade mechanics[cite: 1, 60]. It features two stylized, big-headed characters competing in a confined stadium with the primary objective of scoring a ball into the opponent's goalpost[cite: 1, 28, 63]. From an academic perspective, the motivation behind this project is to bridge the gap between abstract computer graphics theory and practical software engineering[cite: 3]. 
+
+Rather than treating the graphics pipeline as a black box, this project implements a complete, self-contained rendering engine[cite: 2, 6, 60]. The core objective is to master the mathematical foundations of interactive graphics—specifically coordinate spaces, affine transformations, hierarchical modeling, procedural lighting, and real-time collision response—by implementing them manually at the lowest programmatic level available in modern web environments[cite: 3, 8, 24, 60].
+
+\section{Technical Environment Description}
+To guarantee a comprehensive understanding of the graphics pipeline, the software environment rejects high-level commercial frameworks or engines such as Three.js, Babylon.js, or Unity[cite: 2, 3]. Instead, the game is built entirely upon \textbf{basic, native WebGL} and vanilla \textbf{JavaScript (ES6)}[cite: 2, 6]. 
+
+WebGL acts as a low-level rasterization API that maps directly to the hardware acceleration capabilities of the Graphics Processing Unit (GPU)[cite: 4, 5]. This architectural choice demands that the development team manually orchestrate operations that high-level engines typically automate, including:
+\begin{itemize}
+    \item Defining raw vertex streams, normals, and texture coordinates[cite: 18].
+    \item Designing, compiling, and linking custom programmable Shaders written in \textbf{GLSL} (OpenGL Shading Language)[cite: 8].
+    \item Directing data communication between CPU memory and GPU registers via \texttt{uniform} and \texttt{attribute} variables.
+\end{itemize}
+
+The execution context relies on the HTML5 \texttt{<canvas>} element embedded within the \texttt{index.html} layout, which acts as the target rendering surface[cite: 7]. Performance is maximized by enforcing hardware-accelerated processing without external plug-ins, ensuring cross-platform capability across any modern, standards-compliant web browser[cite: 4, 5].
+
+\section{The Main Loop \& Frame-rate Independence}
+A critical requirement of interactive graphical systems is the maintenance of a stable, deterministic simulation loop[cite: 9]. In our application, this is achieved by orchestrating an asynchronous execution cycle anchored to the browser's native \texttt{requestAnimationFrame} API, located within the core initialization routine in \texttt{main.js}[cite: 9, 10].
+
+\subsection{Synchronization with requestAnimationFrame}
+Unlike traditional interval timers (\texttt{setInterval}), which execute arbitrarily and cause screen tearing or stuttering, \texttt{requestAnimationFrame} synchronizes the game's updates directly with the refresh rate of the monitor (typically 60Hz, 120Hz, or higher)[cite: 9]. This minimizes latent rendering overhead and ensures that drawing calls only occur when the display is ready for a repaint.
+
+\subsection{Mathematical Formulation of Delta Time}
+To prevent the game logic, physics updates, and animations from fluctuating based on the hardware's execution speed (Frame-rate Dependency), a strict \textbf{Frame-rate Independence} strategy is implemented[cite: 11]. This is achieved by computing a temporal scale factor known as \emph{Delta Time} ($\Delta t$)[cite: 11].
+
+At each iteration of the main loop, the application samples the high-resolution system clock using the absolute timestamp provided by the API:
+
+\begin{equation}
+    \Delta t = \frac{T_{\text{current}} - T_{\text{previous}}}{1000}
+\end{equation}
+
+Where $T_{\text{current}}$ and $T_{\text{previous}}$ represent the time execution values measured in milliseconds. Dividing by $1000$ normalizes $\Delta t$ into seconds. 
+
+\subsection{State Update Distribution and Code Implementation}
+Within \texttt{main.js}, this calculated $\Delta t$ is distributed to the physical and analytical subsystems[cite: 11]. Any kinematic update—such as updating a particle's position based on its velocity vector $\mathbf{v}$—is scaled linearly by $\Delta t$[cite: 61, 62]:
+
+\begin{equation}
+    \mathbf{p}_{\text{new}} = \mathbf{p}_{\text{old}} + \mathbf{v} \cdot \Delta t
+\end{equation}
+
+Consequently, if the frame rate drops under heavy rendering loads, $\Delta t$ increases proportionally, ensuring that objects traverse the exact same distance in physical world space per absolute unit of time[cite: 11]. 
+
+The following JavaScript snippet from our \texttt{main.js} file shows exactly how our core routine handles this temporal synchronization, updates the logical state, adjusts the camera viewport, and clears the buffers before sending the draw commands to the GPU:
+
+\begin{lstlisting}[style=vscode_JS]
+function render(currentTime) {
+    if (!gameState || !camera) return;
+
+    // Calculate deltaTime and cap its step for physics stability
+    let deltaTime = lastTime ? (currentTime - lastTime) / 1000.0 : 0.016;
+    deltaTime = Math.min(deltaTime, 0.032);
+    lastTime = currentTime;
+
+    // 1. Process game logic, input actions, and custom physics
+    gameState.update(currentTime);
+    
+    // 2. Adjust camera matrices based on the ball's position
+    camera.update(gameState);
+    
+    // 3. Clear WebGL color and depth buffers for the new frame
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    // 4. Request the browser to schedule the next repaint loop
+    requestAnimationFrame(render);
+}
+\end{lstlisting}
+
+This recursive structure serves as the heartbeat of the game engine, seamlessly decoupling computational workloads from the hardware refresh speed to provide an identical arcade feel across different system setups[cite: 10, 11, 60].
