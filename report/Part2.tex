@@ -1,0 +1,61 @@
+\chapter{External Libraries \& Assets}
+
+\section{Third-Party Dependencies}
+To fulfill the strict requirements of the project, we developed almost all the mathematics, game physics, and animation logic from scratch. However, to avoid rewriting low-level linear algebra routines and array utilities, we integrated one specific external library: \textbf{gl-matrix.js}.
+
+\subsection{gl-matrix.js}
+WebGL does not have built-in classes or functions to handle matrices or 3D vectors. Since our game requires shifting objects, rotating body parts, and projecting a 3D view onto a 2D screen, we used \textbf{gl-matrix.js} to handle these operations efficiently. 
+From this library, our code relies exclusively on three main structures:
+\begin{itemize}
+    \item \texttt{mat4}: Used in \texttt{objects.js} and \texttt{main.js} to create and multiply $4\times4$ transformation matrices for every object in the scene.
+    \item \texttt{mat3}: Used in \texttt{main.js} (\texttt{renderObject} and \texttt{renderTexturedObject}) to compute normal matrices, which ensure that our surface lighting stays accurate when objects scale or rotate.
+    \item \texttt{vec3}: Used across the entire project to define 3D coordinates for positions, velocities, camera directions, and colors.
+\end{itemize}
+
+\section{Asset Strategy: 100\% Procedural Generation}
+A key decision in our project was how to handle 3D models and graphics. Instead of downloading external \texttt{.obj} files or using pre-made image textures, we decided to generate everything dynamically through code during the initialization phase.
+
+\subsection{Geometry Generation}
+All the shapes in the game are calculated mathematically inside \texttt{geometry.js}. We created functions that compute vertex positions, normals, and coordinates step by step:
+\begin{itemize}
+    \item \texttt{createBoxMesh}: Generates standard cubes used for the stadium borders, goals, limbs, and the player's torso.
+    \item \texttt{createSphereMesh}: Computes the coordinates for a round shape using rings and segments. This single function allows us to render both the soccer ball and the giant heads of the players.
+    \item \texttt{createCylinderMesh}: Calculates a tubular shape, which we use to represent the interactive power-ups floating on the pitch.
+\end{itemize}
+
+\subsection{Texture Creation and Virtual Canvas Routing}
+To avoid loading external \texttt{.png} or \texttt{.jpg} files, we used the HTML5 Canvas 2D API inside \texttt{main.js} to draw our images programmatically at startup:
+\begin{itemize}
+    \item \texttt{createFieldTexture}: Draws a green rectangle with alternating light and dark stripes, along with white stadium lines and a center circle.
+    \item \texttt{createBallTexture}: Paints a white background and loops through coordinates to draw black pentagons, creating a traditional soccer ball pattern.
+\end{itemize}
+
+Once drawn on a hidden canvas, these images are uploaded directly into WebGL textures using standard filters (\texttt{gl.LINEAR\_MIPMAP\_LINEAR}) to keep them smooth. The following JavaScript implementation from \texttt{main.js} demonstrates exactly how the football field's visual markings and turf patterns are programmatically rendered onto an internal canvas before being bound as an active WebGL texture:
+
+\begin{lstlisting}[style=vscode_JS]
+function createFieldTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 2048;
+    canvas.height = 1024;
+    const ctx = canvas.getContext('2d');
+
+    // Draw alternating grass stripes for the field pitch
+    for (let i = 0; i < 12; i++) {
+        ctx.fillStyle = i % 2 === 0 ? '#2b9043' : '#1f7132';
+        ctx.fillRect(i * canvas.width / 12, 0, canvas.width / 12, canvas.height);
+    }
+
+    // Overlay the layout chalk lines and center penalty circle
+    ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+    ctx.lineWidth = 14;
+    ctx.strokeRect(18, 18, canvas.width - 36, canvas.height - 36);
+    
+    ctx.beginPath();
+    ctx.arc(canvas.width / 2, canvas.height / 2, 130, 0, Math.PI * 2);
+    ctx.stroke();
+
+    return createTextureFromCanvas(canvas);
+}
+\end{lstlisting}
+
+This approach keeps our project compact, fast, and completely self-contained within our scripts, removing any asynchronous asset-loading bottlenecks while proving that clean retro aesthetics can be engineered directly through runtime mathematics.

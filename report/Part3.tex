@@ -1,0 +1,54 @@
+\chapter{Geometric Modeling \& Primitive Reuse}
+
+\section{Abstraction of Base Shapes via Code}
+Instead of importing models from external design software, all the objects in our game are built programmatically inside \texttt{geometry.js}. We achieved this by writing mathematical functions that calculate the vertex positions, their alignment (normals), and texture maps on the fly using basic geometry concepts.
+
+\subsection{Boxes and Planes}
+For flat objects like the stadium floor (\texttt{createFieldMesh}) and the goalposts (\texttt{createBoxMesh}), we defined hardcoded arrays of points in 3D space. Each face of a cube is made of two triangles, so we specified the four corners of each face and used an index array (\texttt{indices}) to tell WebGL how to connect them. This keeps the geometry perfectly clean and efficient for flat surfaces.
+
+\subsection{Spheres and Curved Shapes via Trigonometric Latitudes}
+To create rounded objects like the soccer ball and the players' heads, we implemented the \texttt{createSphereMesh} function. Since computers cannot draw perfect curves, we simulated a sphere using a grid of rings and segments. 
+
+Inside a nested loop, we used basic trigonometric functions (\texttt{Math.sin} and \texttt{Math.cos}) to calculate the exact 3D coordinates $(x, y, z)$ around the surface of the sphere based on step angles. The density of this grid is balanced so that the ball and heads look perfectly smooth during gameplay without slowing down the rendering process. The following implementation from \texttt{geometry.js} shows how these spatial coordinates and normal lighting orientation values are procedural generated at startup:
+
+\begin{lstlisting}[style=vscode_JS]
+function createSphereMesh(segments = 32, rings = 16) {
+    const vertices = [];
+    const normals = [];
+    const radius = 0.5;
+
+    for (let r = 0; r <= rings; r++) {
+        const theta = (r / rings) * Math.PI;
+        const sinTheta = Math.sin(theta);
+        const cosTheta = Math.cos(theta);
+
+        for (let s = 0; s <= segments; s++) {
+            const phi = (s / segments) * Math.PI * 2;
+            const x = Math.cos(phi) * sinTheta;
+            const y = Math.sin(phi) * sinTheta;
+            const z = cosTheta;
+
+            // Store positions adjusted by unit radius and unit normal vectors
+            vertices.push(radius * x, radius * y, radius * z);
+            normals.push(x, y, z);
+        }
+    }
+    // Code continues with index linking to map triangle primitives...
+}
+\end{lstlisting}
+
+\section{The Reuse Approach: Instancing via Transformations}
+One of the most efficient choices in our architecture is how we handle memory for these shapes. WebGL can become slow if we upload a new set of vertices for every single object on the screen. To fix this, our system generates only one "unit" version of each basic shape during startup.
+
+\subsection{Single Topology in Memory}
+When the game starts, functions like \texttt{createSphereMesh} or \texttt{createBoxMesh} run exactly once. They upload a single sphere of radius 1 and a single cube of size 1 into the GPU's memory. We do not have a separate mesh for Player 1's head, another for Player 2's head, and another for the ball. They all share the exact same base sphere data.
+
+\subsection{Deformation via Matrices}
+To represent different objects using the same shared geometry, we use the model matrix of each \texttt{SceneObject} in \texttt{objects.js}. Before drawing an object, the code applies individual scaling factors to stretch or shrink the base shape:
+\begin{itemize}
+    \item \textbf{The Ball:} Uses the sphere mesh scaled uniformly by its physical radius (\texttt{this.radius}).
+    \item \textbf{The Heads:} Use the exact same sphere mesh, but scaled with different dimensions to look larger than the body.
+    \item \textbf{Limbs and Torso:} Use the same base box mesh, scaled into elongated rectangular blocks to look like feet, legs, or bodies.
+\end{itemize}
+
+This approach means that rendering a new obstacle or modifying a player's size (like during a power-up) does not require creating new geometry; it only requires changing a few numbers in the scale matrix before drawing.
