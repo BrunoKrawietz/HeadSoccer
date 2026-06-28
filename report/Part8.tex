@@ -37,17 +37,32 @@ The following comprehensive table outlines every valid real-time keyboard intera
 (Right Side) & \texttt{Up} & Triggers the impulse physics routine to jump into the air. \\ \cline{2-3}
  & \texttt{Down} & Initiates the leg rotation sequence to perform an active kick. \\ \hline
 \hline
-\textbf{Camera Views} & \texttt{1} & Swaps to the static, orthogonal \textbf{Side View} layout. \\ \cline{2-3}
+\textbf{Camera Views} (Figure~\ref{fig:views}) & \texttt{1} & Swaps to the static, orthogonal \textbf{Side View} layout. \\ \cline{2-3}
  & \texttt{2} & Swaps to the top-down tactical \textbf{Top View} overview. \\ \cline{2-3}
  & \texttt{3} & Activates the dynamic \textbf{Stadium View} with smooth ball tracking. \\ \hline
 \hline
 \textbf{Environment} & \texttt{+} / \texttt{-} & Adjusts match difficulty (toggles physics variables and speed bounds). \\ \cline{2-3}
-\textbf{Settings} & \texttt{O} (Letter) & Toggles stadium reflectors (\texttt{stadiumLightsOn}) between night/day look. \\ \cline{2-3}
+\textbf{Settings} & \texttt{O} (Letter) & Toggles stadium reflectors (\texttt{stadiumLightsOn}) between night/day look. (Figure~\ref{fig:stadiumlight})\\ \cline{2-3}
  & \texttt{H} & Toggles the graphical HTML overlay containing basic instructions. \\ \hline
 \end{tabular}
 \caption{Complete Keyboard Mapping for Gameplay and Environment Control Configurations.}
 \label{tab:game_controls}
 \end{table}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=8.7cm]{views.pdf}
+    \caption{Camera views: side view above, top view in the middle, and stadium view below}
+    \label{fig:views}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=8.7cm]{stadiumlights.pdf}
+    \caption{Stadium light: enabled in the upper image and disabled in the lower image}
+    \label{fig:stadiumlight}
+\end{figure}
+
 
 \subsection{Environmental Modification Triggers}
 As shown in Table \ref{tab:game_controls}, keys outside the movement group interact directly with global system uniforms. For example, pressing the \texttt{O} key alters the light attenuation bounds in real time, shifting the scene into an ambient stadium state. 
