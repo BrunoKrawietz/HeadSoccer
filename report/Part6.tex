@@ -3,16 +3,16 @@
 \section{The Shader Pipeline: Data Flow and Interpolation}
 To calculate the visual appearance of our game, we wrote two custom shader programs in GLSL inside \texttt{main.js}: the Vertex Shader and the Fragment Shader. Understanding how data travels between them is crucial to achieving realistic graphics.
 
-The process starts in the CPU, which sends raw vertex attributes (like positions and normal vectors) to the Vertex Shader[cite: 8]. This shader runs once for every corner of our triangles, multiplying the coordinates by our matrices to place them into the correct 3D space. Before finishing, the Vertex Shader outputs special variables called \texttt{varying} parameters. 
+The process starts in the CPU, which sends raw vertex attributes (like positions and normal vectors) to the Vertex Shader. This shader runs once for every corner of our triangles, multiplying the coordinates by our matrices to place them into the correct 3D space. Before finishing, the Vertex Shader outputs special variables called \texttt{varying} parameters. 
 
-As WebGL turns these triangles into individual pixels on the screen (a process called rasterization), it automatically blends and interpolates these \texttt{varying} values across the entire surface. This means that our Fragment Shader, which handles the coloring per-pixel, receives smoothly changing values for every single spot on a face[cite: 46]. This continuous data flow is what allows us to calculate pixel-perfect lighting across curved surfaces like the ball or the players' heads.
+As WebGL turns these triangles into individual pixels on the screen (a process called rasterization), it automatically blends and interpolates these \texttt{varying} values across the entire surface. This means that our Fragment Shader, which handles the coloring per-pixel, receives smoothly changing values for every single spot on a face. This continuous data flow is what allows us to calculate pixel-perfect lighting across curved surfaces like the ball or the players' heads.
 
 \section{Conceptual Breakdown of the Blinn-Phong Model}
-Our pixel illumination relies on a custom implementation of the Blinn-Phong reflection model within our fragment shaders[cite: 46]. This model divides light into three distinct conceptual parts:
+Our pixel illumination relies on a custom implementation of the Blinn-Phong reflection model within our fragment shaders. This model divides light into three distinct conceptual parts:
 \begin{itemize}
-    \item \textbf{Ambient Component:} A low, constant baseline light that ensures objects are never completely pitch black, even when they are not directly facing a spotlight[cite: 47]. It simulates the scattered light inside the stadium.
-    \item \textbf{Diffuse Component (Lambertian):} This represents light scattering evenly in all directions when it hits a matte surface. The code calculates this by evaluating the alignment between the surface normal and the light direction[cite: 48]. The closer the surface is to facing the light source directly, the brighter it shines.
-    \item \textbf{Specular Component:} This creates the glossy, plastic-like highlight on the ball and characters' heads. Instead of using the traditional Phong reflection vector, our Blinn-Phong shader computes the halfway vector between the light direction and the camera view direction[cite: 49]. Checking how close the surface normal is to this halfway vector produces a much sharper and more computationally efficient reflection peak.
+    \item \textbf{Ambient Component:} A low, constant baseline light that ensures objects are never completely pitch black, even when they are not directly facing a spotlight. It simulates the scattered light inside the stadium.
+    \item \textbf{Diffuse Component (Lambertian):} This represents light scattering evenly in all directions when it hits a matte surface. The code calculates this by evaluating the alignment between the surface normal and the light direction. The closer the surface is to facing the light source directly, the brighter it shines.
+    \item \textbf{Specular Component:} This creates the glossy, plastic-like highlight on the ball and characters' heads. Instead of using the traditional Phong reflection vector, our Blinn-Phong shader computes the halfway vector between the light direction and the camera view direction. Checking how close the surface normal is to this halfway vector produces a much sharper and more computationally efficient reflection peak.
 \end{itemize}
 
 \section{Multi-Light System and Distance Attenuation Code}
@@ -48,24 +48,24 @@ The total lighting contribution of all 5 sources is accumulated into the final p
 \chapter{Texturing Techniques \& Camera Systems}
 
 \section{Real-Time Texture Generation via Canvas API}
-To keep our project independent of external image files, we designed a system that creates textures "on the fly" at startup. Inside \texttt{main.js}, we use hidden HTML5 2D canvases as drawing boards before transferring the results into WebGL memory[cite: 23].
+To keep our project independent of external image files, we designed a system that creates textures "on the fly" at startup. Inside \texttt{main.js}, we use hidden HTML5 2D canvases as drawing boards before transferring the results into WebGL memory.
 
-For the field texture (\texttt{createFieldTexture}), the code uses canvas filling loops to paint alternating shades of green, creating a classic striped grass pattern[cite: 23]. Then, it uses standard stroke commands to overlay crisp white chalk lines for the boundaries and the center circle[cite: 23]. For the ball texture (\texttt{createBallTexture}), the script loops through coordinates to procedurally draw black geometric pentagons onto a white background[cite: 23]. Once the drawings are complete, WebGL binds these canvases as raw textures, mapping them onto our 3D geometries via UV coordinates[cite: 23].
+For the field texture (\texttt{createFieldTexture}), the code uses canvas filling loops to paint alternating shades of green, creating a classic striped grass pattern. Then, it uses standard stroke commands to overlay crisp white chalk lines for the boundaries and the center circle. For the ball texture (\texttt{createBallTexture}), the script loops through coordinates to procedurally draw black geometric pentagons onto a white background. Once the drawings are complete, WebGL binds these canvases as raw textures, mapping them onto our 3D geometries via UV coordinates.
 
 \section{Camera Setup and Look-At Space}
-The viewpoint in our 3D stadium is managed by the \texttt{Camera} class in \texttt{view.js}, which uses the \texttt{mat4.lookAt} utility to orient our scene[cite: 55, 71]. This system relies on configuring three simple vectors:
+The viewpoint in our 3D stadium is managed by the \texttt{Camera} class in \texttt{view.js}, which uses the \texttt{mat4.lookAt} utility to orient our scene. This system relies on configuring three simple vectors:
 \begin{itemize}
-    \item \textbf{Eye Position:} The exact 3D coordinates where the physical camera is floating in space[cite: 71].
-    \item \textbf{Target Position:} The point in the world that the camera is pointing at[cite: 71].
+    \item \textbf{Eye Position:} The exact 3D coordinates where the physical camera is floating in space.
+    \item \textbf{Target Position:} The point in the world that the camera is pointing at.
     \item \textbf{Up Vector:} Tells the graphics card which way is up to prevent the screen from turning upside down.
 \end{itemize}
 
-By changing these three vectors based on keyboard inputs, our code lets the user swap between a flat Side View, an overhead tactical Top View, and the main dynamic Stadium View[cite: 57, 58].
+By changing these three vectors based on keyboard inputs, our code lets the user swap between a flat Side View, an overhead tactical Top View, and the main dynamic Stadium View.
 
 \section{The Dynamic Stadium Camera Logic}
-The primary camera mode, called "Stadium View", implements an interpolation logic to follow the action automatically, mimicking a professional television broadcast[cite: 58]. 
+The primary camera mode, called "Stadium View", implements an interpolation logic to follow the action automatically, mimicking a professional television broadcast. 
 
-Instead of remaining completely static or locking the camera rigidly to the ball—which would cause dizzying and erratic screen movements—the camera target tracks the ball smoothly[cite: 58]. The implementation from vuestro script \texttt{view.js} highlights the linear mathematical adjustment applied inside the frame updates to shift the viewport seamlessly:
+Instead of remaining completely static or locking the camera rigidly to the ball—which would cause dizzying and erratic screen movements—the camera target tracks the ball smoothly. The implementation from vuestro script \texttt{view.js} highlights the linear mathematical adjustment applied inside the frame updates to shift the viewport seamlessly:
 
 \begin{lstlisting}[style=vscode_JS]
 // Inside Camera class in view.js
@@ -82,4 +82,4 @@ update(gameState) {
 }
 \end{lstlisting}
 
-This means that as the ball flies toward a goal, the camera slides and pans smoothly along the sidelines, keeping both the players and the ball in frame without ever losing track of the center of attention[cite: 58].
+This means that as the ball flies toward a goal, the camera slides and pans smoothly along the sidelines, keeping both the players and the ball in frame without ever losing track of the center of attention.

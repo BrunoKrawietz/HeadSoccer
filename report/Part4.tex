@@ -6,9 +6,9 @@ To place any 3D entity into the world, our project implements a base class calle
 The connection to the shaders happens through the \texttt{createModelMatrix} function. Inside this method, the code uses \texttt{gl-matrix} to build a clean $4\times4$ transformation matrix. It starts with a blank identity matrix and applies the transformations in a strict, standard order: first translating to the world position, then rotating around the X, Y, and Z axes, and finally scaling the unit geometry. This resulting model matrix is what we send directly to the WebGL vertex shader as a uniform variable. This allows the GPU to know exactly where and how to render that specific object in space.
 
 \section{Hierarchical Structure of the Players}
-One of the most complex visual challenges of the project is representing the avatars. A player is not just a single static shape [cite: 28]; it is a combination of a body, a large head, and moving feet[cite: 28, 29]. To make them move together naturally, we designed a conceptual tree structure—a local scene graph—where the torso acts as the master or "root" element[cite: 25, 28].
+One of the most complex visual challenges of the project is representing the avatars. A player is not just a single static shape ; it is a combination of a body, a large head, and moving feet. To make them move together naturally, we designed a conceptual tree structure—a local scene graph—where the torso acts as the master or "root" element.
 
-In this setup, the head and the feet are sub-nodes that depend directly on the body[cite: 29]. From a code perspective, when a player moves across the pitch or jumps into the air, we only update the main coordinates of the body[cite: 30]. Because of the hierarchical link, the head and limbs follow the body automatically without needing separate manual position updates for each individual part[cite: 30]. This mirrors how compound objects behave in professional graphics engines. Figure~\ref{fig:player} shows how the Head Soccer player is assembled from basic geometry. 
+In this setup, the head and the feet are sub-nodes that depend directly on the body. From a code perspective, when a player moves across the pitch or jumps into the air, we only update the main coordinates of the body. Because of the hierarchical link, the head and limbs follow the body automatically without needing separate manual position updates for each individual part. This mirrors how compound objects behave in professional graphics engines. Figure~\ref{fig:player} shows how the Head Soccer player is assembled from basic geometry. 
 
 \begin{figure}[h]
   \centering
@@ -18,9 +18,9 @@ In this setup, the head and the feet are sub-nodes that depend directly on the b
 \end{figure}
 
 \section{Movement Propagation: Matrix Cloning over Traditional Stacks}
-Instead of using the old-fashioned matrix stack push and pop mechanics typical of older graphics frameworks, our project uses a modern and direct approach in JavaScript by using matrix cloning via \texttt{mat4.clone()}[cite: 27].
+Instead of using the old-fashioned matrix stack push and pop mechanics typical of older graphics frameworks, our project uses a modern and direct approach in JavaScript by using matrix cloning via \texttt{mat4.clone()}.
 
-To render the limbs solidary to the character, the drawing routine first calculates the global matrix of the body[cite: 31]. When it is time to draw a child element, like a foot that is swinging to kick the ball, the code clones the body's matrix[cite: 31]. This creates a separate snapshot of the parent's current position and rotation[cite: 27, 31]. Then, the specific local adjustments of the foot (such as its orbit position and its kicking rotation) are multiplied on top of this cloned copy[cite: 32, 33, 36]. 
+To render the limbs solidary to the character, the drawing routine first calculates the global matrix of the body. When it is time to draw a child element, like a foot that is swinging to kick the ball, the code clones the body's matrix. This creates a separate snapshot of the parent's current position and rotation. Then, the specific local adjustments of the foot (such as its orbit position and its kicking rotation) are multiplied on top of this cloned copy. 
 
 The following code section from our \texttt{main.js} file shows how this branching is implemented in our \texttt{renderLeg} function to attach and animate the upper leg and the foot seamlessly relative to the hip joint:
 
@@ -49,4 +49,4 @@ function renderLeg(root, hip, angle, pantsColor, shoeColor, direction) {
 }
 \end{lstlisting}
 
-This cascading propagation ensures that the foot inherits the global movement and jump height of the torso perfectly [cite: 37], while remaining completely free to perform its own separate kicking animations without distorting the rest of the body[cite: 37].
+This cascading propagation ensures that the foot inherits the global movement and jump height of the torso perfectly , while remaining completely free to perform its own separate kicking animations without distorting the rest of the body.
